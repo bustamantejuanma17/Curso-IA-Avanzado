@@ -1,0 +1,248 @@
+{
+  "name": "Ejercicio 1",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e59d43c3-0b44-440a-9482-58ac2cf9a501",
+      "name": "When chat message received",
+      "webhookId": "6f7a605a-7659-4091-9d52-e8a536073c70"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "##ROL##\nSos un Asistente Corporativo de Calificación y Validación de Gastos.\n\n##ÁMBITO Y OBJETIVO##\nTu objetivo principal es recibir consultas sobre gastos presentados por empleados, verificar los montos contra la política corporativa utilizando las herramientas disponibles y determinar la validez del gasto.\n\n##REGLAS Y ESCALAMIENTO##\n1. No inventes categorías ni asumas límites no estipulados. Consulta siempre la herramienta de políticas disponible.\n2. Si faltan datos clave (monto o concepto), responde indicando explícitamente: \"FALTA UN DATO\" y pide la información pendiente.\n3. Si el gasto es evaluado y cumple la normativa, tu respuesta final debe comenzar con la palabra: \"APROBADO\".\n4. Si el gasto excede los límites o requiere revisión superior, tu respuesta final debe comenzar con la palabra: \"ESCALADO\".\n5. Mantené un lenguaje puramente formal y profesional, omitiendo el uso de lenguaje inclusivo.",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "353ff4a0-1996-4730-b02f-194a81609823",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Herramienta de consulta semántica de políticas de gastos corporativos. Debe activarse de manera autónoma cuando el usuario mencione un gasto, ticket o monto de dinero para comprobar si el concepto está permitido y si cumple con los límites máximos reembolsables de la empresa antes de dar una respuesta definitiva.",
+        "documentId": {
+          "__rl": true,
+          "value": "1cLjxnoJpJhau3jm5vySZ1P5BEmoY1IMj4m7bWmuW3T8",
+          "mode": "list",
+          "cachedResultName": "Politica_de_Gastos_Corporativos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLjxnoJpJhau3jm5vySZ1P5BEmoY1IMj4m7bWmuW3T8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLjxnoJpJhau3jm5vySZ1P5BEmoY1IMj4m7bWmuW3T8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "6b5737b0-6213-4fc0-9d07-213e96fa4dad",
+      "name": "consultar_politica_de_gastos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OG8YmgmBnquJYtnZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "65e26855-4a53-4305-a887-1e796a1ecc07",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Fea2OjMkLdhGn2Ja",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "012c8fac-a7dc-4f30-a997-c25a7e15318a",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "FALTA UN DATO",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        0
+      ],
+      "id": "494674d2-642b-4c66-be36-b06c385a7e69",
+      "name": "¿Caso resuelto?"
+    },
+    {
+      "parameters": {
+        "sendTo": "bustamantejuanma17@gmail.com",
+        "subject": "Log de Observabilidad IA - Dictamen de Gasto",
+        "emailType": "text",
+        "message": "=Ejecución del Agente Completada.\n\nDictamen del Agente:\n{{ $json.output }}\n\nMensaje original del usuario:\n{{ $('When chat message received').item.json.chatInput }}\n\nFecha y Hora:\n{{ $now.format('yyyy-MM-dd HH:mm:ss') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -112
+      ],
+      "id": "62c496fe-ea3f-440c-8e24-1da725f81efe",
+      "name": "Send a message",
+      "webhookId": "8545f7aa-0f4c-4d5a-8f4e-f7300b2e43ab",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "TJHk6JIW2cJulcXA",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "730655ad-7d91-462d-964c-43b653b3e6bf",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_politica_de_gastos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "¿Caso resuelto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Caso resuelto?": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "01e2dc31-13fa-485b-90b4-8d444ba4652e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9dcb06f90a6230a4c10ff142a65c3145419e521467803ebbb8277db5611301c4"
+  },
+  "nodeGroups": [],
+  "id": "FBv0ETI9mTypXS85",
+  "tags": []
+}

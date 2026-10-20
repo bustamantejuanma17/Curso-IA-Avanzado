@@ -1,0 +1,68 @@
+{
+  "name": "Worker 2 - Redactor",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "consulta"
+            },
+            {
+              "name": "instrucción"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b5384c6a-0246-4d18-b678-12c6748d9984",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"status\": \"success\",\n  \"worker\": \"worker_2_redactor\",\n  \"resultado\": \"Gracias por escribirnos. Estamos preparando tu respuesta y te contactamos a la brevedad.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "cc65dc3d-4aa0-4e87-bb12-2996daf738ce",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a5161ae7-26f4-4940-8c93-f022d2cdc02b",
+  "meta": {
+    "instanceId": "9dcb06f90a6230a4c10ff142a65c3145419e521467803ebbb8277db5611301c4"
+  },
+  "nodeGroups": [],
+  "id": "UCopqt0gOI6gGZ2u",
+  "tags": []
+}

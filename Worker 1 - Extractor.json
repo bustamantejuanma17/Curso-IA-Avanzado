@@ -1,0 +1,117 @@
+{
+  "name": "Worker 1 - Extractor",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "consulta"
+            },
+            {
+              "name": "instruccion"
+            }
+          ]
+        }
+      },
+      "id": "00627dab-dada-41e6-a07a-da2dde8f162c",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cLjxnoJpJhau3jm5vySZ1P5BEmoY1IMj4m7bWmuW3T8",
+          "mode": "list",
+          "cachedResultName": "Politica_de_Gastos_Corporativos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLjxnoJpJhau3jm5vySZ1P5BEmoY1IMj4m7bWmuW3T8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLjxnoJpJhau3jm5vySZ1P5BEmoY1IMj4m7bWmuW3T8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "id": "9d74cab6-912f-4fdd-be6c-dda7bd2f614f",
+      "name": "Get row(s) in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OG8YmgmBnquJYtnZ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"status\": \"success\",\n  \"worker\": \"worker_1_extractor\",\n  \"resultado\": \"Recibimos tu consulta y estamos verificando la información. Te respondemos a la brevedad.\"\n}",
+        "options": {}
+      },
+      "id": "d385f624-5384-41b3-b0db-c0792f95cdc5",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "executeOnce": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e642d613-0887-4d74-b91e-4cab51180142",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9dcb06f90a6230a4c10ff142a65c3145419e521467803ebbb8277db5611301c4"
+  },
+  "nodeGroups": [],
+  "id": "ZsZIOEmBJsBTDLoi",
+  "tags": []
+}
